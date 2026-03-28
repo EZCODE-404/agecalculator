@@ -3,89 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>calculateAge</title>
-     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Age Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              'poppins': ['Poppins', 'sans-serif'],
+            },
+            animation: {
+              'fadeInUp': 'fadeInUp 0.5s ease-out',
+              'pulse-glow': 'pulse-glow 2s infinite',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'pulse-glow': {
+                '0%, 100%': { boxShadow: '0 0 20px rgba(168, 85, 247, 0.5)' },
+                '50%': { boxShadow: '0 0 40px rgba(168, 85, 247, 0.8)' },
+              },
+            },
+          }
+        }
+      }
+    </script>
 </head>
-<style type="text/tailwindcss">
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900 flex items-center justify-center p-4 font-poppins">
 
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
-    h1 {
-        color: #ffffff;
-    }
-    label, input, button {
-        display: block;
-        margin: 10px 0;
-    }
-    #result {
-        margin-top: 20px;
-        font-size: 1.2em;
-        color: #007BFF;
-    }
+  <div class="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 transform transition-all hover:scale-[1.02] animate-fadeInUp">
 
-div {
-    max-width: 400px;
-    height: 250px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
- #clearDisplay {
-    margin-left: 10px;
- }
+    <div class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent animate-pulse-glow mb-4">
+        Age Calculator
+      </h1>
+      <p class="text-slate-300 text-lg">Discover your age in style ✨</p>
+    </div>
 
+    <div class="space-y-6">
+      
+      <div>
+        <label for="birthdate" class="block text-slate-200 font-semibold mb-3 text-lg">📅 Enter your birthdate</label>
+        <div class="relative">
+          <input 
+            type="date" 
+            id="birthdate" 
+            class="w-full px-5 py-4 bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl text-white placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 text-lg font-medium"
+            aria-label="Birthdate input"
+          >
+        </div>
+      </div>
 
-</style>    
+      <div class="flex gap-4 pt-2">
+        <button 
+          onclick="calculateAge()" 
+          class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-lg"
+          aria-label="Calculate age"
+        >
+          Calculate Age
+        </button>
+        <button 
+          id="clearDisplay" 
+          onclick="clearDisplay()" 
+          class="px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+          aria-label="Clear form"
+        >
+          Clear
+        </button>
+      </div>
 
-<body>
-    <div class="  p-4 h-60 w-100 bg-gray-800  shadow-2xl" >
-    <h1 class="text-xl font-bold text-center">Age Calculator</h1>
-    <label for="birthdate" class="bg-white text-center rounded-sm">Enter your birthdate</label>
-    <input type="date" id="birthdate" class="bg-white rounded-sm">
-    <button onclick="calculateAge()" class="bg-slate-50 p-1 rounded-sm">Calculate Age </button>
-    <button id="clearDisplay" onclick="clearDisplay()" class="bg-green-300 rounded-sm p-1 hover:bg-green-200" >clear</button>
-    <h2 id="result" class="text-center text-white font-bold"></h2>
+      <div id="result" class="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 opacity-0 translate-y-4 transition-all duration-700 ease-out min-h-[80px] flex items-center justify-center">
+        <!-- Result will appear here with animation -->
+      </div>
 
-</div>
+    </div>
 
-    
-</body>
+  </div>
+
 <script>
-
 function clearDisplay() {
-    document.getElementById('birthdate').value = '';
-    document.getElementById('result').innerText = '';
+  const resultEl = document.getElementById('result');
+  const inputEl = document.getElementById('birthdate');
+  
+  inputEl.value = '';
+  resultEl.style.opacity = '0';
+  resultEl.style.transform = 'translateY(20px)';
+  resultEl.innerHTML = '';
 }
 
-
-
- 
 function calculateAge() {
-    const birthdateInput = document.getElementById('birthdate').value;
-    if (!birthdateInput) {
-        alert('Please enter your birthdate.');
-        return;
-    }
+  const birthdateInput = document.getElementById('birthdate').value;
+  if (!birthdateInput) {
+    showNotification('Please enter your birthdate!', 'error');
+    return;
+  }
 
-    const birthdate = new Date(birthdateInput);
-    const today = new Date();
+  const birthdate = new Date(birthdateInput + 'T00:00:00');
+  const today = new Date();
 
-    let age = today.getFullYear() - birthdate.getFullYear();
-    const monthDifference = today.getMonth() - birthdate.getMonth();
+  let age = today.getFullYear() - birthdate.getFullYear();
+  const monthDifference = today.getMonth() - birthdate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
+    age--;
+  }
 
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
-        age--;
-    }
-     
+  // Calculate days to next birthday
+  const nextBirthday = new Date(today.getFullYear(), birthdate.getMonth(), birthdate.getDate());
+  if (nextBirthday < today) {
+    nextBirthday.setFullYear(today.getFullYear() + 1);
+  }
+  const daysToBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
 
-    document.getElementById('result').innerText = `You are ${age} years old.`;
+  const resultEl = document.getElementById('result');
+  resultEl.innerHTML = `
+    <div class="space-y-3">
+      <div class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+        ${age}
+      </div>
+      <div class="text-2xl font-semibold text-slate-200">years old</div>
+      <div class="text-lg text-slate-300 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm">
+        🎉 Next birthday in ${daysToBirthday} days
+      </div>
+    </div>
+  `;
+  
+  setTimeout(() => {
+    resultEl.style.opacity = '1';
+    resultEl.style.transform = 'translateY(0)';
+  }, 100);
 }
 
+// Notification function for modern UX
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed top-4 right-4 z-50 p-4 rounded-2xl shadow-2xl text-white transform translate-x-full transition-all duration-300 ${
+    type === 'error' ? 'bg-red-500/90 backdrop-blur-sm' : 'bg-purple-500/90 backdrop-blur-sm'
+  }`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.transform = 'translateX(0)';
+  }, 100);
+  
+  setTimeout(() => {
+    notification.style.transform = 'translateX(100%)';
+    setTimeout(() => document.body.removeChild(notification), 300);
+  }, 3000);
+}
 
-
+// Auto-focus input on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('birthdate').focus();
+});
 </script>
 </html>
+
